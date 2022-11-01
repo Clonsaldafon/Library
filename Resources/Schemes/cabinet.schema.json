@@ -7,8 +7,8 @@
       "isPrimary": true
     },
     {
-      "name": "shelfNumber",
-      "type": "int",
+      "name": "shelfNumbers",
+      "type": "string",
       "isPrimary": false
     }
   ]
