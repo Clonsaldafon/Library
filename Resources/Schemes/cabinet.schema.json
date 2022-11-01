@@ -1,0 +1,15 @@
+{
+  "name": "Cabinet",
+  "columns": [
+    {
+      "name": "id",
+      "type": "int",
+      "isPrimary": true
+    },
+    {
+      "name": "shelfNumber",
+      "type": "int",
+      "isPrimary": false
+    }
+  ]
+}

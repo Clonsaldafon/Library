@@ -13,6 +13,12 @@
       "isPrimary": true
     },
     {
+      "name": "cabinetId",
+      "type": "int",
+      "referencedTable": "Cabinet",
+      "isPrimary": true
+    },
+    {
       "name": "title",
       "type": "string",
       "isPrimary": false
