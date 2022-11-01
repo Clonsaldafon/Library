@@ -6,5 +6,11 @@ namespace Library
     {
         public uint Id { get; set; }
         public string FullName { get; set; }
+
+        public Reader(uint id, string fullName)
+        {
+            Id = id;
+            FullName = fullName;
+        }
     }
 }
