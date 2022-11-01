@@ -1,0 +1,26 @@
+{
+  "name": "Book",
+  "columns": [
+    {
+      "name": "id",
+      "type": "int",
+      "isPrimary": true
+    },
+    {
+      "name": "authorId",
+      "type": "int",
+      "referencedTable": "Author",
+      "isPrimary": true
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "isPrimary": false
+    },
+    {
+      "name": "yearOfPublication",
+      "type": "int",
+      "isPrimary": false
+    }
+  ]
+}
