@@ -15,12 +15,12 @@
     },
     {
       "name": "dateTaking",
-      "type": "string",
+      "type": "datetime",
       "isPrimary": false
     },
     {
       "name": "dateReturn",
-      "type": "string",
+      "type": "datetime",
       "isPrimary": false
     }
   ]
