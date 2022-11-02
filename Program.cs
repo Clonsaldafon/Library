@@ -62,10 +62,22 @@ namespace Library
             List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Reader]);
             List<string[]> libraryData = CsvDataParser(csvPaths[(int)Table.Library]);
 
-            foreach (string[] data in libraryData)
+            if (booksData is null || readersData is null)
             {
-                Console.WriteLine(string.Join(", ", data));
+                return;
             }
+
+            List<Book> books = new List<Book>();
+            foreach (string[] bookData in booksData)
+            {
+                books.Add(
+                    new Book(uint.Parse(bookData[0]), uint.Parse(bookData[1]), uint.Parse(bookData[2]), uint.Parse(bookData[3]),
+                        bookData[4], int.Parse(bookData[5]), bool.Parse(bookData[6])
+                    )
+                );
+            }
+
+            Console.WriteLine(books.Count);
         }
     }
 }
