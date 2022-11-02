@@ -10,8 +10,9 @@ namespace Library
         public uint ShelfNumber { get; set; }
         public string Title { get; set; }
         public int YearOfPublication { get; set; }
+        public bool IsAvailable { get; set; }
 
-        public Book(uint id, uint authorId, uint cabinetId, uint shelfNumber, string title, int yearOfPublication)
+        public Book(uint id, uint authorId, uint cabinetId, uint shelfNumber, string title, int yearOfPublication, bool isAvailable)
         {
             Id = id;
             AuthorId = authorId;
@@ -19,6 +20,7 @@ namespace Library
             ShelfNumber = shelfNumber;
             Title = title;
             YearOfPublication = yearOfPublication;
+            IsAvailable = isAvailable;
         }
     }
 }

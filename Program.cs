@@ -1,104 +1,83 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.FileIO;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace Library
 {
+    enum Table
+    {
+        Book,
+        Author,
+        Cabinet,
+        Reader,
+        Library,
+    }
+
     internal class Program
     {
+        static List<string[]> CsvDataParser(string pathToCsvFile)
+        {
+            List<string[]> data = new List<string[]>();
+
+            using (TextFieldParser parser = new TextFieldParser(pathToCsvFile))
+            {
+                parser.TextFieldType = FieldType.Delimited;
+                parser.SetDelimiters(";");
+                while (!parser.EndOfData)
+                {
+                    string[] fields = parser.ReadFields();
+                    data.Add(fields);
+                }
+            }
+
+            return data;
+        }
+
         static void Main(string[] args)
         {
-            var cultureInfo = new CultureInfo("ru-RU", false);
+            string pathOfProject = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
 
-            Book[] books = new Book[]
+            string[] csvPaths = new string[]
             {
-                new Book(1, 1, 1, 1, "Один день Ивана Денисовича", 1959),
-                new Book(2, 1, 1, 1, "Раковый Корпус", 1963),
-                new Book(3, 1, 1, 1, "В круге первом", 1955),
-                new Book(4, 2, 1, 2, "Отцы и дети", 1860),
-                new Book(5, 2, 1, 2, "Муму", 1852),
-                new Book(6, 2, 1, 2, "Ася", 1857),
-                new Book(7, 3, 2, 1, "Камера обскура", 1932),
-                new Book(8, 3, 2, 1, "Защита Лужина", 1929),
-                new Book(9, 3, 2, 1, "Король, дама, валет", 1928),
-                new Book(10, 4, 2, 2, "Собачье сердце", 1925),
-                new Book(11, 4, 2, 2, "Мастер и Маргарита", 1928),
-                new Book(12, 4, 2, 2, "Белая гвардия", 1923),
-                new Book(13, 5, 3, 1, "Капитанская дочка", 1836),
-                new Book(14, 5, 3, 1, "Евгений Онегин", 1833),
-                new Book(15, 5, 3, 1, "Пиковая дама", 1833),
-                new Book(16, 6, 3, 2, "Окаянные дни", 1918),
-                new Book(17, 6, 3, 2, "Легкое дыхание", 1916),
-                new Book(18, 6, 3, 2, "Холодная осень", 1944),
-                new Book(19, 7, 4, 1, "Ревизор", 1835),
-                new Book(20, 7, 4, 1, "Тарас Бульба", 1835),
-                new Book(21, 7, 4, 1, "Шинель", 1841),
-                new Book(22, 8, 4, 2, "Палата №6", 1892),
-                new Book(23, 8, 4, 2, "Человек в футляре", 1865),
-                new Book(24, 8, 4, 2, "О любви", 1898),
-                new Book(25, 9, 5, 1, "Преступление и наказание", 1865),
-                new Book(26, 9, 5, 1, "Идиот", 1867),
-                new Book(27, 9, 5, 1, "Братья Карамазовы", 1878),
-                new Book(28, 10, 5, 2, "Где любовь, там и Бог", 1885),
-                new Book(29, 10, 5, 2, "Смерть Ивана Ильича", 1882),
-                new Book(30, 10, 5, 2, "Кавказский пленник", 1872)
+                $"{pathOfProject}\\Resources\\Data\\book.data.csv",
+                $"{pathOfProject}\\Resources\\Data\\author.data.csv",
+                $"{pathOfProject}\\Resources\\Data\\cabinet.data.csv",
+                $"{pathOfProject}\\Resources\\Data\\reader.data.csv",
+                $"{pathOfProject}\\Resources\\Data\\library.data.csv"
+            };
+            string[] jsonPaths = new string[]
+            {
+                $"{pathOfProject}\\Resources\\Schemes\\book.schema.json",
+                $"{pathOfProject}\\Resources\\Schemes\\author.schema.json",
+                $"{pathOfProject}\\Resources\\Schemes\\cabinet.schema.json",
+                $"{pathOfProject}\\Resources\\Schemes\\reader.schema.json",
+                $"{pathOfProject}\\Resources\\Schemes\\library.schema.json",
             };
 
-            Author[] authors = new Author[]
-            {
-                new Author(1, "Александр Исаевич Солженицын"),
-                new Author(2, "Иван Сергеевич Тургенев"),
-                new Author(3, "Владимир Владимирович Набоков"),
-                new Author(4, "Михаил Афанасьевич Булгаков"),
-                new Author(5, "Александр Сергеевич Пушкин"),
-                new Author(6, "Иван Алексеевич Бунин"),
-                new Author(7, "Николай Васильевич Гоголь"),
-                new Author(8, "Антон Павлович Чехов"),
-                new Author(9, "Федор Михайлович Достоевский"),
-                new Author(10, "Лев Николаевич Толстой")
-            };
+            List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Book]);
+            List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Author]);
+            List<string[]> cabinetsData = CsvDataParser(csvPaths[(int)Table.Cabinet]);
+            List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Reader]);
+            List<string[]> libraryData = CsvDataParser(csvPaths[(int)Table.Library]);
 
-            Cabinet[] cabinets = new Cabinet[]
+            if (booksData is null || readersData is null)
             {
-                new Cabinet(1, new uint[] { 1, 2 }),
-                new Cabinet(2, new uint[] { 1, 2 }),
-                new Cabinet(3, new uint[] { 1, 2 }),
-                new Cabinet(4, new uint[] { 1, 2 }),
-                new Cabinet(5, new uint[] { 1, 2 })
-            };
+                return;
+            }
 
-            Reader[] readers = new Reader[]
+            List<Book> books = new List<Book>();
+            foreach (string[] bookData in booksData)
             {
-                new Reader(1, "Безмельницин Антон"),
-                new Reader(2, "Бекасов Михаил"),
-                new Reader(3, "Бойко Степан"),
-                new Reader(4, "Устьянцев Евгений"),
-                new Reader(5, "Устьянцев Сергей"),
-                new Reader(6, "Святых Иван"),
-                new Reader(7, "Киров Иван"),
-                new Reader(8, "Калентьев Дмитрий"),
-                new Reader(9, "Клещев Сергей"),
-                new Reader(10, "Кожурков Георгий"),
-                new Reader(11, "Колпаков Артем"),
-                new Reader(12, "Парфенов Никита"),
-                new Reader(13, "Перерва Владислав"),
-                new Reader(14, "Разин Максим"),
-                new Reader(15, "Фазылов Владислав"),
-                new Reader(16, "Харинов Дмитрий")
-            };
+                books.Add(
+                    new Book(uint.Parse(bookData[0]), uint.Parse(bookData[1]), uint.Parse(bookData[2]), uint.Parse(bookData[3]),
+                        bookData[4], int.Parse(bookData[5]), bool.Parse(bookData[6])
+                    )
+                );
+            }
 
-            Library[] library = new Library[]
-            {
-                new Library(1, 7, DateTime.Parse("11.04.2021", cultureInfo), DateTime.Parse("13.05.2021", cultureInfo)),
-                new Library(3, 24, DateTime.Parse("07.03.2021", cultureInfo), DateTime.Parse("10.05.2021", cultureInfo)),
-                new Library(2, 13, DateTime.Parse("10.12.2021", cultureInfo), DateTime.Parse("03.01.2022", cultureInfo)),
-                new Library(2, 2, DateTime.Parse("14.06.2021", cultureInfo), DateTime.Parse("21.10.2021", cultureInfo)),
-                new Library(7, 7, DateTime.Parse("10.12.2021", cultureInfo), DateTime.Parse("03.01.2022", cultureInfo)),
-                new Library(8, 7, DateTime.Parse("10.05.2021", cultureInfo), DateTime.Parse("10.12.2021", cultureInfo)),
-                new Library(9, 1, DateTime.Parse("07.03.2021", cultureInfo), DateTime.Parse("10.05.2021", cultureInfo)),
-                new Library(4, 16, DateTime.Parse("07.03.2021", cultureInfo), DateTime.Parse("13.05.2021", cultureInfo)),
-                new Library(10, 2, DateTime.Parse("21.10.2021", cultureInfo), DateTime.Parse("03.01.2022", cultureInfo)),
-                new Library(13, 5, DateTime.Parse("14.06.2021", cultureInfo), DateTime.Parse("21.10.2021", cultureInfo))
-            };
+            Console.WriteLine(books.Count);
         }
     }
 }

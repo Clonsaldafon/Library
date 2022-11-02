@@ -27,6 +27,11 @@
       "name": "yearOfPublication",
       "type": "int",
       "isPrimary": false
+    },
+    {
+      "name": "isAvailable",
+      "type": "bool",
+      "isPrimary": false
     }
   ]
 }
