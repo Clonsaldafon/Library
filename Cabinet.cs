@@ -4,8 +4,8 @@ namespace Library
 {
     internal class Cabinet
     {
-        public uint Id { get; set; }
-        public uint[] ShelfNumbers { get; set; }
+        public uint Id { get; private set; }
+        public uint[] ShelfNumbers { get; private set; }
 
         public Cabinet(uint id, uint[] shelfNumbers)
         {

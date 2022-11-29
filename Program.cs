@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 namespace Library
 {
@@ -17,6 +18,43 @@ namespace Library
 
     internal class Program
     {
+        static void Main(string[] args)
+        {
+            string pathOfProject = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+
+            string[] fileNames = new string[] { "book", "author", "cabinet", "reader", "library" };
+
+            string[] csvPaths = GetPaths(pathOfProject, "Data", fileNames, "data.csv");
+            string[] jsonPaths = GetPaths(pathOfProject, "Schemes", fileNames, "schema.json");
+
+            List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Book]);
+            List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Author]);
+            List<string[]> cabinetsData = CsvDataParser(csvPaths[(int)Table.Cabinet]);
+            List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Reader]);
+            List<string[]> libraryData = CsvDataParser(csvPaths[(int)Table.Library]);
+
+            if (booksData is null || readersData is null)
+            {
+                return;
+            }
+
+            List<Book> books = CreateBooksList(booksData);
+
+            
+        }
+
+        static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)
+        {
+            string[] paths = new string[fileNames.Length];
+
+            for (int i = 0; i < fileNames.Length; i++)
+            {
+                paths[i] = $"{pathOfProject}\\Resources\\{folder}\\{fileNames[i]}.{type}";
+            }
+
+            return paths;
+        }
+
         static List<string[]> CsvDataParser(string pathToCsvFile)
         {
             List<string[]> data = new List<string[]>();
@@ -35,39 +73,10 @@ namespace Library
             return data;
         }
 
-        static void Main(string[] args)
+        static List<Book> CreateBooksList(List<string[]> booksData)
         {
-            string pathOfProject = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-
-            string[] csvPaths = new string[]
-            {
-                $"{pathOfProject}\\Resources\\Data\\book.data.csv",
-                $"{pathOfProject}\\Resources\\Data\\author.data.csv",
-                $"{pathOfProject}\\Resources\\Data\\cabinet.data.csv",
-                $"{pathOfProject}\\Resources\\Data\\reader.data.csv",
-                $"{pathOfProject}\\Resources\\Data\\library.data.csv"
-            };
-            string[] jsonPaths = new string[]
-            {
-                $"{pathOfProject}\\Resources\\Schemes\\book.schema.json",
-                $"{pathOfProject}\\Resources\\Schemes\\author.schema.json",
-                $"{pathOfProject}\\Resources\\Schemes\\cabinet.schema.json",
-                $"{pathOfProject}\\Resources\\Schemes\\reader.schema.json",
-                $"{pathOfProject}\\Resources\\Schemes\\library.schema.json",
-            };
-
-            List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Book]);
-            List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Author]);
-            List<string[]> cabinetsData = CsvDataParser(csvPaths[(int)Table.Cabinet]);
-            List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Reader]);
-            List<string[]> libraryData = CsvDataParser(csvPaths[(int)Table.Library]);
-
-            if (booksData is null || readersData is null)
-            {
-                return;
-            }
-
             List<Book> books = new List<Book>();
+
             foreach (string[] bookData in booksData)
             {
                 books.Add(
@@ -77,7 +86,7 @@ namespace Library
                 );
             }
 
-            Console.WriteLine(books.Count);
+            return books;
         }
     }
 }

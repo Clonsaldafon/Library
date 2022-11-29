@@ -4,8 +4,8 @@ namespace Library
 {
     internal class Author
     {
-        public uint Id { get; set; }
-        public string FullName { get; set; }
+        public uint Id { get; private set; }
+        public string FullName { get; private set; }
 
         public Author(uint id, string fullName)
         {

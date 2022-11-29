@@ -4,10 +4,10 @@ namespace Library
 {
     internal class Library
     {
-        public uint ReaderId { get; set; }
-        public uint BookId { get; set; }
-        public DateTime DateTaking { get; set; }
-        public DateTime DateReturn { get; set; }
+        public uint ReaderId { get; private set; }
+        public uint BookId { get; private set; }
+        public DateTime DateTaking { get; private set; }
+        public DateTime DateReturn { get; private set; }
 
         public Library(uint readerId, uint bookId, DateTime dateTaking, DateTime dateReturn)
         {
