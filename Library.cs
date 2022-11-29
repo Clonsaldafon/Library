@@ -4,17 +4,17 @@ namespace Library
 {
     internal class Library
     {
-        public uint ReaderId { get; private set; }
-        public uint BookId { get; private set; }
-        public DateTime DateTaking { get; private set; }
-        public DateTime DateReturn { get; private set; }
+        public uint[] ReaderIds { get; private set; }
+        public uint[] BookIds { get; private set; }
+        public DateTime[] DatesTaking { get; private set; }
+        public DateTime[] DatesReturn { get; private set; }
 
-        public Library(uint readerId, uint bookId, DateTime dateTaking, DateTime dateReturn)
+        public Library(uint[] readerIds, uint[] bookIds, DateTime[] datesTaking, DateTime[] datesReturn)
         {
-            ReaderId = readerId;
-            BookId = bookId;
-            DateTaking = dateTaking;
-            DateReturn = dateReturn;
+            ReaderIds = readerIds;
+            BookIds = bookIds;
+            DatesTaking = datesTaking;
+            DatesReturn = datesReturn;
         }
     }
 }
