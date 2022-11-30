@@ -48,11 +48,10 @@ namespace Library
             Console.WriteLine($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[3]))} |");
             for (int i = 0; i < Books.Count; i++)
             {
-                Console.WriteLine($"{Books[i].AuthorId} {Array.IndexOf(Authors.ToArray(), Books[i].AuthorId)}");
-                /*Console.Write($"| {authorsStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[0] - authorsStrings[Array.IndexOf(Authors.ToArray(), Books[i].AuthorId)].Length)))} ");
+                Console.Write($"| {authorsStrings[GetAuthorById(Books[i].AuthorId).Id - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[0] - authorsStrings[GetAuthorById(Books[i].AuthorId).Id - 1].Length)))} ");
                 Console.Write($"| {booksStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[1] - booksStrings[i].Length)))} ");
-                Console.Write($"| {readersStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[2] - readersStrings[i].Length)))} ");
-                Console.WriteLine($"| {datesTakingStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[3] - datesTakingStrings[i].Length)))} |");*/
+                Console.Write($"| {readersStrings[GetReaderById(Records[i].ReaderId).Id - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[2] - readersStrings[GetReaderById(Records[i].ReaderId).Id - 1].Length)))} ");
+                Console.WriteLine($"| {datesTakingStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[3] - datesTakingStrings[i].Length)))} |");
             }
             //Console.WriteLine(string.Format("{{0, -{0}}}|", GetMaxStringLength(strings)));
         }
@@ -102,6 +101,32 @@ namespace Library
             
 
             return strings;
+        }
+
+        private Author GetAuthorById(uint id)
+        {
+            foreach (Author author in Authors)
+            {
+                if (author.Id == id)
+                {
+                    return author;
+                }
+            }
+
+            return null;
+        }
+
+        private Reader GetReaderById(uint id)
+        {
+            foreach (Reader reader in Readers)
+            {
+                if (reader.Id == id)
+                {
+                    return reader;
+                }
+            }
+
+            return null;
         }
 
         private int GetMaxStringLength(string[] strings)
