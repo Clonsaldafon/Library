@@ -43,12 +43,11 @@ namespace Library
             List<Author> authors = CreateAuthorsList(authorsData);
             List<Cabinet> cabinets = CreateCabinetsList(cabinetsData);
             List<Reader> readers = CreateReadersList(readersData);
-            Library library = CreateLibrary(libraryData);
 
-            for (int i = 0; i < library.ReaderIds.Length; i++)
-            {
-                Console.WriteLine($"{library.ReaderIds[0]} | {library.BookIds} | {library.DatesTaking} | {library.DatesReturn}");
-            }
+            Library library = CreateLibrary(booksData);
+            library = AddDataFromLibraryData(library, libraryData);
+
+            books = CheckTheAvailabilityOfBooks(library, books);
         }
 
         static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)
@@ -134,9 +133,23 @@ namespace Library
             return readers;
         }
 
-        static Library CreateLibrary(List<string[]> libraryData)
+        static Library CreateLibrary(List<string[]> booksData)
         {
-            uint[] readerIds = new uint[libraryData.Count];
+            Library library = new Library(
+                new uint[booksData.Count], new uint[booksData.Count], new DateOnly[booksData.Count], new DateOnly[booksData.Count]
+            );
+
+            for (int i = 0; i < booksData.Count; i++)
+            {
+                library.BookIds[i] = uint.Parse(booksData[i][0]);
+                library.ReaderIds[i] = uint.MinValue;
+                library.DatesTaking[i] = DateOnly.MinValue;
+                library.DatesReturn[i] = DateOnly.MinValue;
+            }
+
+            return library;
+
+            /*uint[] readerIds = new uint[libraryData.Count];
             uint[] bookIds = new uint[libraryData.Count];
             DateTime[] datesTaking = new DateTime[libraryData.Count];
             DateTime[] datesReturn = new DateTime[libraryData.Count];
@@ -150,12 +163,39 @@ namespace Library
             }
 
             Library library = new Library(readerIds, bookIds, datesTaking, datesReturn);
+            return library;*/
+        }
+
+        static Library AddDataFromLibraryData(Library library, List<string[]> libraryData)
+        {
+            for (int i = 0; i < libraryData.Count; i++)
+            {
+                if (library.BookIds.Contains(uint.Parse(libraryData[i][1])))
+                {
+                    library.ReaderIds[uint.Parse(libraryData[i][0]) - 1] = uint.Parse(libraryData[i][0]);
+                    library.DatesTaking[uint.Parse(libraryData[i][0]) - 1] = DateOnly.Parse(libraryData[i][2]);
+                    library.DatesReturn[uint.Parse(libraryData[i][0]) - 1] = DateOnly.Parse(libraryData[i][3]);
+                }
+            }
+
             return library;
         }
 
-        static Library AddBooksInStock(Library library, List<Reader> readers, List<Book> books)
+        static List<Book> CheckTheAvailabilityOfBooks(Library library, List<Book> books)
         {
-            
+            foreach (Book book in books)
+            {
+                if (library.DatesReturn[book.Id - 1] != DateOnly.MinValue)
+                {
+                    book.SetAvailable(true);
+                }
+                else
+                {
+                    book.SetAvailable(false);
+                }
+            }
+
+            return books;
         }
     }
 }

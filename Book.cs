@@ -22,5 +22,10 @@ namespace Library
             YearOfPublication = yearOfPublication;
             IsAvailable = isAvailable;
         }
+
+        public void SetAvailable(bool value)
+        {
+            IsAvailable = value;
+        }
     }
 }

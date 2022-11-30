@@ -6,10 +6,10 @@ namespace Library
     {
         public uint[] ReaderIds { get; private set; }
         public uint[] BookIds { get; private set; }
-        public DateTime[] DatesTaking { get; private set; }
-        public DateTime[] DatesReturn { get; private set; }
+        public DateOnly[] DatesTaking { get; private set; }
+        public DateOnly[] DatesReturn { get; private set; }
 
-        public Library(uint[] readerIds, uint[] bookIds, DateTime[] datesTaking, DateTime[] datesReturn)
+        public Library(uint[] readerIds, uint[] bookIds, DateOnly[] datesTaking, DateOnly[] datesReturn)
         {
             ReaderIds = readerIds;
             BookIds = bookIds;
