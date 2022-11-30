@@ -48,6 +48,23 @@ namespace Library
             library = AddDataFromLibraryData(library, libraryData);
 
             books = CheckTheAvailabilityOfBooks(library, books);
+
+            foreach(Book book in books)
+            {
+                Console.WriteLine(book.IsAvailable);
+            }
+
+            /*for (int i = 0; i < library.BookIds.Length; i++)
+            {
+                if (books[i].IsAvailable)
+                {
+                    Console.WriteLine($"Автор: {authors[(int)books[i].AuthorId - 1].FullName} | Название: {books[i].Title}");
+                }
+                else
+                {
+                    Console.WriteLine($"Автор: {authors[(int)books[i].AuthorId].FullName} | Название: {books[i].Title} | Читает: {readers[(int)library.ReaderIds[i]].FullName} | Взял: {library.DatesTaking[i]}");
+                }
+            }*/
         }
 
         static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)
