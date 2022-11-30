@@ -10,11 +10,11 @@ namespace Library
 {
     enum Table
     {
-        Book,
-        Author,
-        Cabinet,
-        Reader,
-        Library,
+        Books,
+        Authors,
+        Cabinets,
+        Readers,
+        Records,
     }
 
     internal class Program
@@ -26,54 +26,23 @@ namespace Library
             string[] fileNames = new string[] { "book", "author", "cabinet", "reader", "library" };
 
             string[] csvPaths = GetPaths(pathOfProject, "Data", fileNames, "data.csv");
-            string[] jsonPaths = GetPaths(pathOfProject, "Schemes", fileNames, "schema.json");
+            /*string[] jsonPaths = GetPaths(pathOfProject, "Schemes", fileNames, "schema.json");*/
 
-            List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Book]);
-            List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Author]);
-            List<string[]> cabinetsData = CsvDataParser(csvPaths[(int)Table.Cabinet]);
-            List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Reader]);
-            List<string[]> libraryData = CsvDataParser(csvPaths[(int)Table.Library]);
-
-            if (booksData is null || readersData is null)
-            {
-                return;
-            }
+            List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Books]);
+            List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Authors]);
+            /*List<string[]> cabinetsData = CsvDataParser(csvPaths[(int)Table.Cabinets]);*/
+            List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Readers]);
+            List<string[]> recordsData = CsvDataParser(csvPaths[(int)Table.Records]);
 
             List<Book> books = CreateBooksList(booksData);
             List<Author> authors = CreateAuthorsList(authorsData);
-            List<Cabinet> cabinets = CreateCabinetsList(cabinetsData);
+            /*List<Cabinet> cabinets = CreateCabinetsList(cabinetsData);*/
             List<Reader> readers = CreateReadersList(readersData);
+            List<Record> records = CreateRecordsList(recordsData);
 
-            Library library = CreateLibrary(booksData);
-            library = AddDataFromLibraryData(library, libraryData);
+            Database database = new Database(authors, books, readers, records);
 
-            books = CheckTheAvailabilityOfBooks(library, books);
-
-            for (int i = 0; i < library.BookIds.Length; i++)
-            {
-                Console.WriteLine($"{library.ReaderIds[i]} {library.BookIds[i]} {library.DatesTaking[i]} {library.DatesReturn[i]}");
-            }
-            Console.WriteLine();
-
-            Console.WriteLine("Книги в наличии");
-            for (int i = 0; i < library.BookIds.Length; i++)
-            {
-                if (books[i].IsAvailable || library.ReaderIds[i] == uint.MinValue)
-                {
-                    Console.WriteLine($"Автор: {authors[(int)books[i].AuthorId - 1].FullName} | Название: {books[i].Title}");
-                }
-            }
-            Console.WriteLine();
-
-            Console.WriteLine("Книги на руках");
-            for (int i = 0; i < library.BookIds.Length; i++)
-            {
-                if (books[i].IsAvailable && library.DatesReturn[i] != DateOnly.MinValue)
-                {
-                    Console.WriteLine($"Автор: {authors[(int)books[i].AuthorId].FullName} | Название: {books[i].Title} | Читает: {readers[(int)library.ReaderIds[i]].FullName} | Взял: {library.DatesTaking[i]}");
-                }
-            }
-            Console.WriteLine();
+            database.WriteData();
         }
 
         static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)
@@ -113,10 +82,16 @@ namespace Library
             foreach (string[] bookData in booksData)
             {
                 books.Add(
-                    new Book(uint.Parse(bookData[0]), uint.Parse(bookData[1]), uint.Parse(bookData[2]), uint.Parse(bookData[3]),
-                        bookData[4], int.Parse(bookData[5]), bool.Parse(bookData[6])
-                    )
-                );
+                    new Book(
+                        uint.Parse(bookData[0]),
+                        uint.Parse(bookData[1]),
+                        uint.Parse(bookData[2]),
+                        uint.Parse(bookData[3]),
+                        bookData[4],
+                        int.Parse(bookData[5]),
+                        bool.Parse(bookData[6])
+                        )
+                    );
             }
 
             return books;
@@ -128,13 +103,18 @@ namespace Library
 
             foreach (string[] authorData in authorsData)
             {
-                authors.Add(new Author(uint.Parse(authorData[0]), authorData[1]));
+                authors.Add(
+                    new Author(
+                        uint.Parse(authorData[0]),
+                        authorData[1]
+                        )
+                    );
             }
 
             return authors;
         }
 
-        static List<Cabinet> CreateCabinetsList(List<string[]> cabinetsData)
+        /*static List<Cabinet> CreateCabinetsList(List<string[]> cabinetsData)
         {
             List<Cabinet> cabinets= new List<Cabinet>();
 
@@ -145,7 +125,7 @@ namespace Library
             }
 
             return cabinets;
-        }
+        }*/
 
         static List<Reader> CreateReadersList(List<string[]> readersData)
         {
@@ -153,59 +133,34 @@ namespace Library
 
             foreach (string[] readerData in readersData)
             {
-                readers.Add(new Reader(uint.Parse(readerData[0]), readerData[1]));
+                readers.Add(
+                    new Reader(
+                        uint.Parse(readerData[0]),
+                        readerData[1]
+                        )
+                    );
             }
 
             return readers;
         }
 
-        static Library CreateLibrary(List<string[]> booksData)
+        static List<Record> CreateRecordsList(List<string[]> recordsData)
         {
-            Library library = new Library(
-                new uint[booksData.Count], new uint[booksData.Count], new DateOnly[booksData.Count], new DateOnly[booksData.Count]
-            );
+            List<Record> records = new List<Record>();
 
-            for (int i = 0; i < booksData.Count; i++)
+            for (int i = 0; i < recordsData.Count; i++)
             {
-                library.BookIds[i] = uint.Parse(booksData[i][0]);
-                library.ReaderIds[i] = uint.MinValue;
-                library.DatesTaking[i] = DateOnly.MinValue;
-                library.DatesReturn[i] = DateOnly.MinValue;
+                records.Add(
+                    new Record(
+                        uint.Parse(recordsData[i][0]),
+                        uint.Parse(recordsData[i][1]),
+                        DateOnly.Parse(recordsData[i][2]),
+                        DateOnly.Parse(recordsData[i][3])
+                        )
+                    );
             }
 
-            return library;
-        }
-
-        static Library AddDataFromLibraryData(Library library, List<string[]> libraryData)
-        {
-            for (int i = 0; i < libraryData.Count; i++)
-            {
-                if (library.BookIds.Contains(uint.Parse(libraryData[i][1])))
-                {
-                    library.ReaderIds[uint.Parse(libraryData[i][0]) - 1] = uint.Parse(libraryData[i][0]);
-                    library.DatesTaking[uint.Parse(libraryData[i][0]) - 1] = DateOnly.Parse(libraryData[i][2]);
-                    library.DatesReturn[uint.Parse(libraryData[i][0]) - 1] = DateOnly.Parse(libraryData[i][3]);
-                }
-            }
-
-            return library;
-        }
-
-        static List<Book> CheckTheAvailabilityOfBooks(Library library, List<Book> books)
-        {
-            for (int i = 0; i < books.Count; i++)
-            {
-                if (library.DatesReturn[books[i].Id - 1] != DateOnly.MinValue)
-                {
-                    books[i].SetAvailable(true);
-                }
-                else
-                {
-                    books[i].SetAvailable(false);
-                }
-            }
-
-            return books;
+            return records;
         }
     }
 }
