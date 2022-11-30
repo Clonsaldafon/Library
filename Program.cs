@@ -49,16 +49,18 @@ namespace Library
 
             books = CheckTheAvailabilityOfBooks(library, books);
 
+            for (int i = 0; i < library.BookIds.Length; i++)
+            {
+                Console.WriteLine($"{library.ReaderIds[i]} {library.BookIds[i]} {library.DatesTaking[i]} {library.DatesReturn[i]}");
+            }
+            Console.WriteLine();
+
             Console.WriteLine("Книги в наличии");
             for (int i = 0; i < library.BookIds.Length; i++)
             {
-                if (books[i].IsAvailable)
+                if (books[i].IsAvailable || library.ReaderIds[i] == uint.MinValue)
                 {
                     Console.WriteLine($"Автор: {authors[(int)books[i].AuthorId - 1].FullName} | Название: {books[i].Title}");
-                }
-                if (library.ReaderIds[i] == uint.MinValue)
-                {
-                    Console.WriteLine(i);
                 }
             }
             Console.WriteLine();
