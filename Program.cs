@@ -49,22 +49,29 @@ namespace Library
 
             books = CheckTheAvailabilityOfBooks(library, books);
 
-            foreach(Book book in books)
-            {
-                Console.WriteLine(book.IsAvailable);
-            }
-
-            /*for (int i = 0; i < library.BookIds.Length; i++)
+            Console.WriteLine("Книги в наличии");
+            for (int i = 0; i < library.BookIds.Length; i++)
             {
                 if (books[i].IsAvailable)
                 {
                     Console.WriteLine($"Автор: {authors[(int)books[i].AuthorId - 1].FullName} | Название: {books[i].Title}");
                 }
-                else
+                if (library.ReaderIds[i] == uint.MinValue)
+                {
+                    Console.WriteLine(i);
+                }
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Книги на руках");
+            for (int i = 0; i < library.BookIds.Length; i++)
+            {
+                if (books[i].IsAvailable && library.DatesReturn[i] != DateOnly.MinValue)
                 {
                     Console.WriteLine($"Автор: {authors[(int)books[i].AuthorId].FullName} | Название: {books[i].Title} | Читает: {readers[(int)library.ReaderIds[i]].FullName} | Взял: {library.DatesTaking[i]}");
                 }
-            }*/
+            }
+            Console.WriteLine();
         }
 
         static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)
@@ -165,22 +172,6 @@ namespace Library
             }
 
             return library;
-
-            /*uint[] readerIds = new uint[libraryData.Count];
-            uint[] bookIds = new uint[libraryData.Count];
-            DateTime[] datesTaking = new DateTime[libraryData.Count];
-            DateTime[] datesReturn = new DateTime[libraryData.Count];
-
-            for (int i = 0; i < libraryData.Count; i++)
-            {
-                readerIds[i] = uint.Parse(libraryData[i][0]);
-                bookIds[i] = uint.Parse(libraryData[i][1]);
-                datesTaking[i] = DateTime.Parse(libraryData[i][2]);
-                datesReturn[i] = DateTime.Parse(libraryData[i][3]);
-            }
-
-            Library library = new Library(readerIds, bookIds, datesTaking, datesReturn);
-            return library;*/
         }
 
         static Library AddDataFromLibraryData(Library library, List<string[]> libraryData)
@@ -200,15 +191,15 @@ namespace Library
 
         static List<Book> CheckTheAvailabilityOfBooks(Library library, List<Book> books)
         {
-            foreach (Book book in books)
+            for (int i = 0; i < books.Count; i++)
             {
-                if (library.DatesReturn[book.Id - 1] != DateOnly.MinValue)
+                if (library.DatesReturn[books[i].Id - 1] != DateOnly.MinValue)
                 {
-                    book.SetAvailable(true);
+                    books[i].SetAvailable(true);
                 }
                 else
                 {
-                    book.SetAvailable(false);
+                    books[i].SetAvailable(false);
                 }
             }
 
