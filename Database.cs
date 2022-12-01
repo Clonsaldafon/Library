@@ -48,12 +48,23 @@ namespace Library
             Console.WriteLine($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[3]))} |");
             for (int i = 0; i < Books.Count; i++)
             {
-                Console.Write($"| {authorsStrings[GetAuthorById(Books[i].AuthorId).Id - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[0] - authorsStrings[GetAuthorById(Books[i].AuthorId).Id - 1].Length)))} ");
+                uint authorId = GetAuthorIdByBookId(Books[i].AuthorId);
+                uint readerId = GetRecordReaderIdByBookId(Books[i].Id);
+
+                Console.Write($"| {authorsStrings[authorId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[0] - authorsStrings[authorId - 1].Length)))} ");
                 Console.Write($"| {booksStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[1] - booksStrings[i].Length)))} ");
-                Console.Write($"| {readersStrings[GetReaderById(Records[i].ReaderId).Id - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[2] - readersStrings[GetReaderById(Records[i].ReaderId).Id - 1].Length)))} ");
-                Console.WriteLine($"| {datesTakingStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[3] - datesTakingStrings[i].Length)))} |");
+
+                if (readerId > 0 && readersStrings.Contains(Readers[(int)readerId].FullName))
+                {
+                    Console.Write($"| {readersStrings[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[2] - readersStrings[readerId - 1].Length)))} ");
+                    Console.WriteLine($"| {datesTakingStrings[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[3] - datesTakingStrings[readerId - 1].Length)))} |");
+                }
+                else
+                {
+                    Console.Write($"| {string.Concat(Enumerable.Repeat(" ", maxStringsLengths[2]))} ");
+                    Console.WriteLine($"| {string.Concat(Enumerable.Repeat(" ", maxStringsLengths[3]))} |");
+                }
             }
-            //Console.WriteLine(string.Format("{{0, -{0}}}|", GetMaxStringLength(strings)));
         }
 
         private string[] GetStrings(List<Author> authors)
@@ -98,35 +109,35 @@ namespace Library
                     strings[i] = records[i].DateTaking.ToString();
                 }
             }
-            
+
 
             return strings;
         }
 
-        private Author GetAuthorById(uint id)
+        private uint GetAuthorIdByBookId(uint id)
         {
             foreach (Author author in Authors)
             {
                 if (author.Id == id)
                 {
-                    return author;
+                    return author.Id;
                 }
             }
 
-            return null;
+            return uint.MinValue;
         }
 
-        private Reader GetReaderById(uint id)
+        private uint GetRecordReaderIdByBookId(uint id)
         {
-            foreach (Reader reader in Readers)
+            foreach (Record record in Records)
             {
-                if (reader.Id == id)
+                if (record.BookId == id)
                 {
-                    return reader;
+                    return record.ReaderId;
                 }
             }
 
-            return null;
+            return uint.MinValue;
         }
 
         private int GetMaxStringLength(string[] strings)
@@ -142,6 +153,17 @@ namespace Library
             }
 
             return maxStringLength;
+        }
+
+        public void UpdateData()
+        {
+            foreach (Record record in Records)
+            {
+                if (DateTime.Compare(record.DateReturn, DateTime.Now) < 0)
+                {
+                    Books[(int)record.BookId - 1].SetAvailable(true);
+                }
+            }
         }
     }
 }

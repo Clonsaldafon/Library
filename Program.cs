@@ -154,8 +154,8 @@ namespace Library
                     new Record(
                         uint.Parse(recordsData[i][0]),
                         uint.Parse(recordsData[i][1]),
-                        DateOnly.Parse(recordsData[i][2]),
-                        DateOnly.Parse(recordsData[i][3])
+                        DateTime.Parse(recordsData[i][2]),
+                        DateTime.Parse(recordsData[i][3])
                         )
                     );
             }
