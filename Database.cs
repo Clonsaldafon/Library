@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Library
 {
@@ -23,8 +21,6 @@ namespace Library
 
         public void WriteData()
         {
-            int numberOfColumns = 4;
-
             string[] authorsStrings = GetStrings(Authors);
             string[] booksStrings = GetStrings(Books);
             string[] readersStrings = GetStrings(Records, true);
@@ -46,6 +42,7 @@ namespace Library
             Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[1]))} ");
             Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[2]))} ");
             Console.WriteLine($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[3]))} |");
+
             for (int i = 0; i < Books.Count; i++)
             {
                 uint authorId = GetAuthorIdByBookId(Books[i].AuthorId);
@@ -155,7 +152,7 @@ namespace Library
             return maxStringLength;
         }
 
-        public void UpdateData()
+        public void UpdateBooksAvailabilityData()
         {
             foreach (Record record in Records)
             {
