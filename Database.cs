@@ -21,92 +21,93 @@ namespace Library
 
         public void WriteData()
         {
-            string[] authorsStrings = GetStrings(Authors);
-            string[] booksStrings = GetStrings(Books);
-            string[] readersStrings = GetStrings(Records, true);
-            string[] datesTakingStrings = GetStrings(Records, false);
+            string[] authorsFullNames = GetAuthorsFullNames();
+            string[] booksTitles = GetBooksTitles();
+            string[] readersFullNames = GetReadersFullNames();
+            string[] datesTaking = GetDatesTaking();
 
-            int[] maxStringsLengths = new int[]
+            int[] maxLengths = new int[]
             {
-                GetMaxStringLength(authorsStrings),
-                GetMaxStringLength(booksStrings),
-                GetMaxStringLength(readersStrings),
-                GetMaxStringLength(datesTakingStrings)
+                GetMaxLength(authorsFullNames),
+                GetMaxLength(booksTitles),
+                GetMaxLength(readersFullNames),
+                GetMaxLength(datesTaking)
             };
 
-            Console.Write($"| Автор{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[0] - "Автор".Length)))} ");
-            Console.Write($"| Название{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[1] - "Название".Length)))} ");
-            Console.Write($"| Читает{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[2] - "Читает".Length)))} ");
-            Console.WriteLine($"| Взял{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[3] - "Взял".Length)))} |");
-            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[0]))} ");
-            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[1]))} ");
-            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[2]))} ");
-            Console.WriteLine($"| {string.Concat(Enumerable.Repeat("-", maxStringsLengths[3]))} |");
+            Console.Write($"| Автор{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[0] - "Автор".Length)))} ");
+            Console.Write($"| Название{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[1] - "Название".Length)))} ");
+            Console.Write($"| Читает{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[2] - "Читает".Length)))} ");
+            Console.WriteLine($"| Взял{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[3] - "Взял".Length)))} |");
+            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxLengths[0]))} ");
+            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxLengths[1]))} ");
+            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxLengths[2]))} ");
+            Console.WriteLine($"| {string.Concat(Enumerable.Repeat("-", maxLengths[3]))} |");
 
             for (int i = 0; i < Books.Count; i++)
             {
                 uint authorId = GetAuthorIdByBookId(Books[i].AuthorId);
                 uint readerId = GetRecordReaderIdByBookId(Books[i].Id);
 
-                Console.Write($"| {authorsStrings[authorId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[0] - authorsStrings[authorId - 1].Length)))} ");
-                Console.Write($"| {booksStrings[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[1] - booksStrings[i].Length)))} ");
+                Console.Write($"| {authorsFullNames[authorId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[0] - authorsFullNames[authorId - 1].Length)))} ");
+                Console.Write($"| {booksTitles[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[1] - booksTitles[i].Length)))} ");
 
-                if (readerId > 0 && readersStrings.Contains(Readers[(int)readerId].FullName))
+                if (readerId > 0 && readersFullNames.Contains(Readers[(int)readerId].FullName))
                 {
-                    Console.Write($"| {readersStrings[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[2] - readersStrings[readerId - 1].Length)))} ");
-                    Console.WriteLine($"| {datesTakingStrings[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxStringsLengths[3] - datesTakingStrings[readerId - 1].Length)))} |");
+                    Console.Write($"| {readersFullNames[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[2] - readersFullNames[readerId - 1].Length)))} ");
+                    Console.WriteLine($"| {datesTaking[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[3] - datesTaking[readerId - 1].Length)))} |");
                 }
                 else
                 {
-                    Console.Write($"| {string.Concat(Enumerable.Repeat(" ", maxStringsLengths[2]))} ");
-                    Console.WriteLine($"| {string.Concat(Enumerable.Repeat(" ", maxStringsLengths[3]))} |");
+                    Console.Write($"| {string.Concat(Enumerable.Repeat(" ", maxLengths[2]))} ");
+                    Console.WriteLine($"| {string.Concat(Enumerable.Repeat(" ", maxLengths[3]))} |");
                 }
             }
         }
 
-        private string[] GetStrings(List<Author> authors)
+        private string[] GetAuthorsFullNames()
         {
-            string[] strings = new string[authors.Count];
+            string[] strings = new string[Authors.Count];
 
-            for (int i = 0; i < authors.Count; i++)
+            for (int i = 0; i < Authors.Count; i++)
             {
-                strings[i] = authors[i].FullName;
+                strings[i] = Authors[i].FullName;
             }
 
             return strings;
         }
 
-        private string[] GetStrings(List<Book> books)
+        private string[] GetBooksTitles()
         {
-            string[] strings = new string[books.Count];
+            string[] strings = new string[Books.Count];
 
-            for (int i = 0; i < books.Count; i++)
+            for (int i = 0; i < Books.Count; i++)
             {
-                strings[i] = books[i].Title;
+                strings[i] = Books[i].Title;
             }
 
             return strings;
         }
 
-        private string[] GetStrings(List<Record> records, bool isReaders)
+        private string[] GetReadersFullNames()
         {
-            string[] strings = new string[records.Count];
+            string[] strings = new string[Records.Count];
 
-            if (isReaders)
+            for (int i = 0; i < Records.Count; i++)
             {
-                for (int i = 0; i < records.Count; i++)
-                {
-                    strings[i] = Readers[(int)records[i].ReaderId - 1].FullName;
-                }
-            }
-            else
-            {
-                for (int i = 0; i < records.Count; i++)
-                {
-                    strings[i] = records[i].DateTaking.ToString();
-                }
+                strings[i] = Readers[(int)Records[i].ReaderId - 1].FullName;
             }
 
+            return strings;
+        }
+
+        private string[] GetDatesTaking()
+        {
+            string[] strings = new string[Records.Count];
+
+            for (int i = 0; i < Records.Count; i++)
+            {
+                strings[i] = Records[i].DateTaking.ToString();
+            }
 
             return strings;
         }
@@ -137,15 +138,15 @@ namespace Library
             return uint.MinValue;
         }
 
-        private int GetMaxStringLength(string[] strings)
+        private int GetMaxLength(string[] data)
         {
             int maxStringLength = int.MinValue;
 
-            for (int i = 0; i < strings.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
-                if (strings[i].Length > maxStringLength)
+                if (data[i].Length > maxStringLength)
                 {
-                    maxStringLength = strings[i].Length;
+                    maxStringLength = data[i].Length;
                 }
             }
 

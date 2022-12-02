@@ -37,6 +37,8 @@ namespace Library
 
             Database database = new Database(authors, books, readers, records);
 
+            database.UpdateBooksAvailabilityData();
+
             database.WriteData();
         }
 
@@ -72,24 +74,21 @@ namespace Library
 
         static List<Book> CreateBooksList(List<string[]> booksData)
         {
-            Console.WriteLine(string.Join(", ", booksData[0]));
             List<Book> books = new List<Book>();
 
             foreach (string[] bookData in booksData)
             {
-                books.Add(
-                    new Book(
-                        uint.Parse(bookData[0]),
-                        uint.Parse(bookData[1]),
-                        bookData[2],
-                        int.Parse(bookData[3]),
-                        new Dictionary<uint, uint>()
-                        {
-                            { uint.Parse(bookData[4]), uint.Parse(bookData[5]) },
-                        },
-                        bool.Parse(bookData[6])
-                        )
-                    );
+                uint id = uint.Parse(bookData[0]);
+                uint authorId = uint.Parse(bookData[1]);
+                string title = bookData[2];
+                int yearOfPublication = int.Parse(bookData[3]);
+                Dictionary<uint, uint> cabinetAndShelfNumbers = new Dictionary<uint, uint>()
+                {
+                    { uint.Parse(bookData[4]), uint.Parse(bookData[5]) }
+                };
+                bool isAvailable = bool.Parse(bookData[6]);
+
+                books.Add(new Book(id, authorId, title, yearOfPublication, cabinetAndShelfNumbers, isAvailable));
             }
 
             return books;
@@ -101,12 +100,10 @@ namespace Library
 
             foreach (string[] authorData in authorsData)
             {
-                authors.Add(
-                    new Author(
-                        uint.Parse(authorData[0]),
-                        authorData[1]
-                        )
-                    );
+                uint id = uint.Parse(authorData[0]);
+                string fullName = authorData[1];
+
+                authors.Add(new Author(id, fullName));
             }
 
             return authors;
@@ -118,12 +115,10 @@ namespace Library
 
             foreach (string[] readerData in readersData)
             {
-                readers.Add(
-                    new Reader(
-                        uint.Parse(readerData[0]),
-                        readerData[1]
-                        )
-                    );
+                uint id = uint.Parse(readerData[0]);
+                string fullName = readerData[1];
+
+                readers.Add(new Reader(id, fullName));
             }
 
             return readers;
@@ -135,14 +130,12 @@ namespace Library
 
             for (int i = 0; i < recordsData.Count; i++)
             {
-                records.Add(
-                    new Record(
-                        uint.Parse(recordsData[i][0]),
-                        uint.Parse(recordsData[i][1]),
-                        DateTime.Parse(recordsData[i][2]),
-                        DateTime.Parse(recordsData[i][3])
-                        )
-                    );
+                uint readerId = uint.Parse(recordsData[i][0]);
+                uint bookId = uint.Parse(recordsData[i][1]);
+                DateTime dateTaking = DateTime.Parse(recordsData[i][2]);
+                DateTime dateReturn = DateTime.Parse(recordsData[i][3]);
+
+                records.Add(new Record(readerId, bookId, dateTaking, dateReturn));
             }
 
             return records;
