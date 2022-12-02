@@ -1,10 +1,7 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Library
 {
@@ -30,13 +27,11 @@ namespace Library
 
             List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Books]);
             List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Authors]);
-            /*List<string[]> cabinetsData = CsvDataParser(csvPaths[(int)Table.Cabinets]);*/
             List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Readers]);
             List<string[]> recordsData = CsvDataParser(csvPaths[(int)Table.Records]);
 
             List<Book> books = CreateBooksList(booksData);
             List<Author> authors = CreateAuthorsList(authorsData);
-            /*List<Cabinet> cabinets = CreateCabinetsList(cabinetsData);*/
             List<Reader> readers = CreateReadersList(readersData);
             List<Record> records = CreateRecordsList(recordsData);
 
@@ -116,19 +111,6 @@ namespace Library
 
             return authors;
         }
-
-        /*static List<Cabinet> CreateCabinetsList(List<string[]> cabinetsData)
-        {
-            List<Cabinet> cabinets= new List<Cabinet>();
-
-            foreach (string[] cabinetData in cabinetsData)
-            {
-                string[] shelfNumbers = cabinetData[1].Split(',');
-                cabinets.Add(new Cabinet(uint.Parse(cabinetData[0]), new uint[] { uint.Parse(shelfNumbers[0]), uint.Parse(shelfNumbers[1]) }));
-            }
-
-            return cabinets;
-        }*/
 
         static List<Reader> CreateReadersList(List<string[]> readersData)
         {
