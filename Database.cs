@@ -21,6 +21,9 @@ namespace Library
 
         public void WriteData()
         {
+            int numberOfColumns = 4;
+            string[] columnsNames = new string[] { "Автор", "Название", "Читает", "Взял" };
+
             string[] authorsFullNames = GetAuthorsFullNames();
             string[] booksTitles = GetBooksTitles();
             string[] readersFullNames = GetReadersFullNames();
@@ -34,34 +37,9 @@ namespace Library
                 GetMaxLength(datesTaking)
             };
 
-            Console.Write($"| Автор{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[0] - "Автор".Length)))} ");
-            Console.Write($"| Название{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[1] - "Название".Length)))} ");
-            Console.Write($"| Читает{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[2] - "Читает".Length)))} ");
-            Console.WriteLine($"| Взял{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[3] - "Взял".Length)))} |");
-            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxLengths[0]))} ");
-            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxLengths[1]))} ");
-            Console.Write($"| {string.Concat(Enumerable.Repeat("-", maxLengths[2]))} ");
-            Console.WriteLine($"| {string.Concat(Enumerable.Repeat("-", maxLengths[3]))} |");
-
-            for (int i = 0; i < Books.Count; i++)
-            {
-                uint authorId = GetAuthorIdByBookId(Books[i].AuthorId);
-                uint readerId = GetRecordReaderIdByBookId(Books[i].Id);
-
-                Console.Write($"| {authorsFullNames[authorId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[0] - authorsFullNames[authorId - 1].Length)))} ");
-                Console.Write($"| {booksTitles[i]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[1] - booksTitles[i].Length)))} ");
-
-                if (readerId > 0 && readersFullNames.Contains(Readers[(int)readerId].FullName))
-                {
-                    Console.Write($"| {readersFullNames[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[2] - readersFullNames[readerId - 1].Length)))} ");
-                    Console.WriteLine($"| {datesTaking[readerId - 1]}{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[3] - datesTaking[readerId - 1].Length)))} |");
-                }
-                else
-                {
-                    Console.Write($"| {string.Concat(Enumerable.Repeat(" ", maxLengths[2]))} ");
-                    Console.WriteLine($"| {string.Concat(Enumerable.Repeat(" ", maxLengths[3]))} |");
-                }
-            }
+            WriteColumnsNames(numberOfColumns, columnsNames, maxLengths);
+            WriteSeparator(numberOfColumns, "-", maxLengths);
+            FillInTheColumns(authorsFullNames, booksTitles, readersFullNames, datesTaking, maxLengths);
         }
 
         private string[] GetAuthorsFullNames()
@@ -112,6 +90,66 @@ namespace Library
             return strings;
         }
 
+        private int GetMaxLength(string[] data)
+        {
+            int maxStringLength = int.MinValue;
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (data[i].Length > maxStringLength)
+                {
+                    maxStringLength = data[i].Length;
+                }
+            }
+
+            return maxStringLength;
+        }
+
+        private void WriteColumnsNames(int numberOfColumns, string[] columnsNames, int[] maxLengths)
+        {
+            if (numberOfColumns == columnsNames.Length)
+            {
+                for (int i = 0; i < numberOfColumns; i++)
+                {
+                    string emptyString = string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[i] - columnsNames[i].Length)));
+                    Console.Write($"| {columnsNames[i]}{emptyString} ");
+                }
+                Console.WriteLine("|");
+            }
+        }
+
+        private void WriteSeparator(int numberOfColumns, string separator, int[] maxLengths)
+        {
+            for (int i = 0; i < numberOfColumns; i++)
+            {
+                Console.Write($"| {string.Concat(Enumerable.Repeat(separator, maxLengths[i]))} ");
+            }
+            Console.WriteLine("|");
+        }
+
+        private void FillInTheColumns(string[] authorsFullNames, string[] booksTitles, string[] readersFullNames, string[] datesTaking, int[] maxLengths)
+        {
+            for (int i = 0; i < Books.Count; i++)
+            {
+                uint authorId = GetAuthorIdByBookId(Books[i].AuthorId);
+                uint readerId = GetRecordReaderIdByBookId(Books[i].Id);
+
+                Console.Write($"| {authorsFullNames[authorId - 1]}{GetEmptyString(maxLengths[0], authorsFullNames, authorId)} ");
+                Console.Write($"| {booksTitles[i]}{GetEmptyString(maxLengths[1], booksTitles, Books[i].Id)} ");
+
+                if (readerId > 0 && readersFullNames.Contains(Readers[(int)readerId].FullName))
+                {
+                    Console.Write($"| {readersFullNames[readerId - 1]}{GetEmptyString(maxLengths[2], readersFullNames, readerId)} ");
+                    Console.WriteLine($"| {datesTaking[readerId - 1]}{GetEmptyString(maxLengths[3], datesTaking, readerId)} |");
+                }
+                else
+                {
+                    Console.Write($"| {GetEmptyString(maxLengths[2])} ");
+                    Console.WriteLine($"| {GetEmptyString(maxLengths[3])} |");
+                }
+            }
+        }
+
         private uint GetAuthorIdByBookId(uint id)
         {
             foreach (Author author in Authors)
@@ -138,19 +176,14 @@ namespace Library
             return uint.MinValue;
         }
 
-        private int GetMaxLength(string[] data)
+        private string GetEmptyString(int maxLength, string[] data, uint id)
         {
-            int maxStringLength = int.MinValue;
+            return $"{string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLength - data[id - 1].Length)))}";
+        }
 
-            for (int i = 0; i < data.Length; i++)
-            {
-                if (data[i].Length > maxStringLength)
-                {
-                    maxStringLength = data[i].Length;
-                }
-            }
-
-            return maxStringLength;
+        private string GetEmptyString(int maxLength)
+        {
+            return $"{string.Concat(Enumerable.Repeat(" ", maxLength))}";
         }
 
         public void UpdateBooksAvailabilityData()
