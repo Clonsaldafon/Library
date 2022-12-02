@@ -77,6 +77,7 @@ namespace Library
 
         static List<Book> CreateBooksList(List<string[]> booksData)
         {
+            Console.WriteLine(string.Join(", ", booksData[0]));
             List<Book> books = new List<Book>();
 
             foreach (string[] bookData in booksData)
@@ -85,10 +86,12 @@ namespace Library
                     new Book(
                         uint.Parse(bookData[0]),
                         uint.Parse(bookData[1]),
-                        uint.Parse(bookData[2]),
-                        uint.Parse(bookData[3]),
-                        bookData[4],
-                        int.Parse(bookData[5]),
+                        bookData[2],
+                        int.Parse(bookData[3]),
+                        new Dictionary<uint, uint>()
+                        {
+                            { uint.Parse(bookData[4]), uint.Parse(bookData[5]) },
+                        },
                         bool.Parse(bookData[6])
                         )
                     );
