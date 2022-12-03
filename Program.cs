@@ -21,16 +21,16 @@ namespace Library
 
             string[] fileNames = new string[] { "books", "authors", "readers", "records" };
 
-            string[] csvPaths = GetPaths(pathOfProject, "Data", fileNames, "data.csv");
+            string[] csvPaths = ReaderFromCSV.GetPaths(pathOfProject, "Data", fileNames, "data.csv");
             /*string[] jsonPaths = GetPaths(pathOfProject, "Schemas", fileNames, "schema.json");*/
 
-            List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Books]);
-            List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Authors]);
-            List<string[]> readersData = CsvDataParser(csvPaths[(int)Table.Readers]);
-            List<string[]> recordsData = CsvDataParser(csvPaths[(int)Table.Records]);
+            List<string[]> booksData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Books]);
+            List<string[]> authorsData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Authors]);
+            List<string[]> readersData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Readers]);
+            List<string[]> recordsData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Records]);
 
-            List<Book> books = CreateBooksList(booksData);
             List<Author> authors = CreateAuthorsList(authorsData);
+            List<Book> books = CreateBooksList(booksData);
             List<Reader> readers = CreateReadersList(readersData);
             List<Record> records = CreateRecordsList(recordsData);
 
@@ -42,34 +42,19 @@ namespace Library
             Console.WriteLine(data);
         }
 
-        static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)
+        static List<Author> CreateAuthorsList(List<string[]> authorsData)
         {
-            string[] paths = new string[fileNames.Length];
+            List<Author> authors = new List<Author>();
 
-            for (int i = 0; i < fileNames.Length; i++)
+            foreach (string[] authorData in authorsData)
             {
-                paths[i] = $"{pathOfProject}\\Resources\\{folder}\\{fileNames[i]}-{type}";
+                uint id = uint.Parse(authorData[0]);
+                string fullName = authorData[1];
+
+                authors.Add(new Author(id, fullName));
             }
 
-            return paths;
-        }
-
-        static List<string[]> CsvDataParser(string pathToCsvFile)
-        {
-            List<string[]> data = new List<string[]>();
-
-            using (TextFieldParser parser = new TextFieldParser(pathToCsvFile))
-            {
-                parser.TextFieldType = FieldType.Delimited;
-                parser.SetDelimiters(";");
-                while (!parser.EndOfData)
-                {
-                    string[] fields = parser.ReadFields();
-                    data.Add(fields);
-                }
-            }
-
-            return data;
+            return authors;
         }
 
         static List<Book> CreateBooksList(List<string[]> booksData)
@@ -92,21 +77,6 @@ namespace Library
             }
 
             return books;
-        }
-
-        static List<Author> CreateAuthorsList(List<string[]> authorsData)
-        {
-            List<Author> authors = new List<Author>();
-
-            foreach (string[] authorData in authorsData)
-            {
-                uint id = uint.Parse(authorData[0]);
-                string fullName = authorData[1];
-
-                authors.Add(new Author(id, fullName));
-            }
-
-            return authors;
         }
 
         static List<Reader> CreateReadersList(List<string[]> readersData)
