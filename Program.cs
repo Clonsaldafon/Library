@@ -21,7 +21,7 @@ namespace Library
 
             string[] fileNames = new string[] { "books", "authors", "readers", "records" };
 
-            string[] csvPaths = ReaderFromCSV.GetPaths(pathOfProject, "Data", fileNames, "data.csv");
+            string[] csvPaths = ReaderFromCSV.GetPaths(pathOfProject, fileNames);
             /*string[] jsonPaths = GetPaths(pathOfProject, "Schemas", fileNames, "schema.json");*/
 
             List<string[]> booksData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Books]);

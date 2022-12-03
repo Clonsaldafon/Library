@@ -6,7 +6,7 @@ namespace Library
 {
     internal class ReaderFromCSV
     {
-        public static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)
+        public static string[] GetPaths(string pathOfProject, string[] fileNames, string folder = "Data", string type = "data.csv")
         {
             string[] paths = new string[fileNames.Length];
 
