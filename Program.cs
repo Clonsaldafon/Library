@@ -22,7 +22,7 @@ namespace Library
             string[] fileNames = new string[] { "books", "authors", "readers", "records" };
 
             string[] csvPaths = GetPaths(pathOfProject, "Data", fileNames, "data.csv");
-            /*string[] jsonPaths = GetPaths(pathOfProject, "Schemes", fileNames, "schema.json");*/
+            /*string[] jsonPaths = GetPaths(pathOfProject, "Schemas", fileNames, "schema.json");*/
 
             List<string[]> booksData = CsvDataParser(csvPaths[(int)Table.Books]);
             List<string[]> authorsData = CsvDataParser(csvPaths[(int)Table.Authors]);
