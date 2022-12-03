@@ -38,7 +38,8 @@ namespace Library
 
             database.UpdateBooksAvailabilityData();
 
-            database.WriteData();
+            string data = database.GetData();
+            Console.WriteLine(data);
         }
 
         static string[] GetPaths(string pathOfProject, string folder, string[] fileNames, string type)

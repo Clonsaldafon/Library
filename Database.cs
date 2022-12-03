@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Library
 {
@@ -19,7 +20,7 @@ namespace Library
             Records = records;
         }
 
-        public void WriteData()
+        public string GetData()
         {
             int numberOfColumns = 4;
             string[] columnsNames = new string[] { "Автор", "Название", "Читает", "Взял" };
@@ -37,9 +38,13 @@ namespace Library
                 GetMaxLength(datesTaking)
             };
 
-            WriteColumnsNames(numberOfColumns, columnsNames, maxLengths);
-            WriteSeparator(numberOfColumns, "-", maxLengths);
-            FillInTheColumns(authorsFullNames, booksTitles, readersFullNames, datesTaking, maxLengths);
+            string columns = GetColumns(numberOfColumns, columnsNames, maxLengths);
+            string dataInColumns = GetDataInColumns(authorsFullNames, booksTitles, readersFullNames, datesTaking, maxLengths);
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append(columns);
+            builder.Append(dataInColumns);
+            return builder.ToString();
         }
 
         private string[] GetAuthorsFullNames()
@@ -105,49 +110,63 @@ namespace Library
             return maxStringLength;
         }
 
-        private void WriteColumnsNames(int numberOfColumns, string[] columnsNames, int[] maxLengths)
+        private string GetColumns(int numberOfColumns, string[] columnsNames, int[] maxLengths)
         {
+            StringBuilder builder = new StringBuilder();
+
             if (numberOfColumns == columnsNames.Length)
             {
                 for (int i = 0; i < numberOfColumns; i++)
                 {
                     string emptyString = string.Concat(Enumerable.Repeat(" ", Math.Abs(maxLengths[i] - columnsNames[i].Length)));
-                    Console.Write($"| {columnsNames[i]}{emptyString} ");
+                    builder.Append($"| {columnsNames[i]}{emptyString} ");
                 }
-                Console.WriteLine("|");
+                builder.Append("|\n");
+
+                builder.Append(AddSeparator(numberOfColumns, "-", maxLengths));
             }
+
+            return builder.ToString();
         }
 
-        private void WriteSeparator(int numberOfColumns, string separator, int[] maxLengths)
+        private string AddSeparator(int numberOfColumns, string separator, int[] maxLengths)
         {
+            StringBuilder builder = new StringBuilder();
+
             for (int i = 0; i < numberOfColumns; i++)
             {
-                Console.Write($"| {string.Concat(Enumerable.Repeat(separator, maxLengths[i]))} ");
+                builder.Append($"| {string.Concat(Enumerable.Repeat(separator, maxLengths[i]))} ");
             }
-            Console.WriteLine("|");
+            builder.Append("|\n");
+
+            return builder.ToString();
         }
 
-        private void FillInTheColumns(string[] authorsFullNames, string[] booksTitles, string[] readersFullNames, string[] datesTaking, int[] maxLengths)
+        private string GetDataInColumns(string[] authorsFullNames, string[] booksTitles, string[] readersFullNames, string[] datesTaking, int[] maxLengths)
         {
+            StringBuilder builder = new StringBuilder();
+
             for (int i = 0; i < Books.Count; i++)
             {
                 uint authorId = GetAuthorIdByBookId(Books[i].AuthorId);
                 uint readerId = GetRecordReaderIdByBookId(Books[i].Id);
 
-                Console.Write($"| {authorsFullNames[authorId - 1]}{GetEmptyString(maxLengths[0], authorsFullNames, authorId)} ");
-                Console.Write($"| {booksTitles[i]}{GetEmptyString(maxLengths[1], booksTitles, Books[i].Id)} ");
+                builder.Append($"| {authorsFullNames[authorId - 1]}{GetEmptyString(maxLengths[0], authorsFullNames, authorId)} ");
+                builder.Append($"| {booksTitles[i]}{GetEmptyString(maxLengths[1], booksTitles, Books[i].Id)} ");
 
                 if (readerId > 0 && readersFullNames.Contains(Readers[(int)readerId].FullName))
                 {
-                    Console.Write($"| {readersFullNames[readerId - 1]}{GetEmptyString(maxLengths[2], readersFullNames, readerId)} ");
-                    Console.WriteLine($"| {datesTaking[readerId - 1]}{GetEmptyString(maxLengths[3], datesTaking, readerId)} |");
+                    builder.Append($"| {readersFullNames[readerId - 1]}{GetEmptyString(maxLengths[2], readersFullNames, readerId)} ");
+                    builder.Append($"| {datesTaking[readerId - 1]}{GetEmptyString(maxLengths[3], datesTaking, readerId)} |\n");
                 }
                 else
                 {
-                    Console.Write($"| {GetEmptyString(maxLengths[2])} ");
-                    Console.WriteLine($"| {GetEmptyString(maxLengths[3])} |");
+                    builder.Append($"| {GetEmptyString(maxLengths[2])} ");
+                    builder.Append($"| {GetEmptyString(maxLengths[3])} |\n");
                 }
             }
+
+            return builder.ToString();
         }
 
         private uint GetAuthorIdByBookId(uint id)
@@ -190,7 +209,7 @@ namespace Library
         {
             foreach (Record record in Records)
             {
-                if (DateTime.Compare(record.DateReturn, DateTime.Now) < 0)
+                if (DateTime.Compare(record.DateReturn, DateTime.Now) < 0 || record.DateReturn != DateTime.MinValue)
                 {
                     Books[(int)record.BookId - 1].SetAvailable(true);
                 }
