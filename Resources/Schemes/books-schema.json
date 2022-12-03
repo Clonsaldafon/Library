@@ -3,19 +3,13 @@
   "columns": [
     {
       "name": "id",
-      "type": "int",
+      "type": "uint",
       "isPrimary": true
     },
     {
       "name": "authorId",
-      "type": "int",
+      "type": "uint",
       "referencedTable": "Author",
-      "isPrimary": true
-    },
-    {
-      "name": "cabinetId",
-      "type": "int",
-      "referencedTable": "Cabinet",
       "isPrimary": true
     },
     {
@@ -27,6 +21,10 @@
       "name": "yearOfPublication",
       "type": "int",
       "isPrimary": false
+    },
+    {
+      "name": "cabinetAndShelfNumber",
+      "type": "dictionary<uint, uint>"
     },
     {
       "name": "isAvailable",

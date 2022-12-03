@@ -3,24 +3,24 @@
   "columns": [
     {
       "name": "readerId",
-      "type": "int",
+      "type": "uint",
       "referencedTable": "Reader",
       "isPrimary": true
     },
     {
       "name": "bookId",
-      "type": "int",
+      "type": "uint",
       "referencedTable": "Book",
       "isPrimary": true
     },
     {
       "name": "dateTaking",
-      "type": "datetime",
+      "type": "dateTime",
       "isPrimary": false
     },
     {
       "name": "dateReturn",
-      "type": "datetime",
+      "type": "dateTime",
       "isPrimary": false
     }
   ]

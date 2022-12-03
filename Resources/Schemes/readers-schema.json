@@ -1,15 +1,15 @@
 {
-  "name": "Author",
+  "name": "Reader",
   "columns": [
     {
       "name": "id",
-      "type": "int",
+      "type": "uint",
       "isPrimary": true
     },
     {
       "name": "fullName",
       "type": "string",
       "isPrimary": false
-    }
+    },
   ]
 }

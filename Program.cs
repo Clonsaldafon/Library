@@ -9,9 +9,8 @@ namespace Library
     {
         Books,
         Authors,
-        Cabinets,
         Readers,
-        Records,
+        Records
     }
 
     internal class Program
@@ -20,7 +19,7 @@ namespace Library
         {
             string pathOfProject = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
 
-            string[] fileNames = new string[] { "book", "author", "cabinet", "reader", "library" };
+            string[] fileNames = new string[] { "books", "authors", "readers", "records" };
 
             string[] csvPaths = GetPaths(pathOfProject, "Data", fileNames, "data.csv");
             /*string[] jsonPaths = GetPaths(pathOfProject, "Schemes", fileNames, "schema.json");*/
@@ -48,7 +47,7 @@ namespace Library
 
             for (int i = 0; i < fileNames.Length; i++)
             {
-                paths[i] = $"{pathOfProject}\\Resources\\{folder}\\{fileNames[i]}.{type}";
+                paths[i] = $"{pathOfProject}\\Resources\\{folder}\\{fileNames[i]}-{type}";
             }
 
             return paths;
