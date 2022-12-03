@@ -7,8 +7,7 @@ namespace Library.WorkWithSchemas
     {
         public static bool IsValidToSchema(string[] lines, Schema schema)
         {
-            //начинаем с 1 строки, а не с нулевой ибо 1 строка у нас это названия колонок
-            for (int i = 1; i < lines.Length; i++)
+            for (int i = 0; i < lines.Length; i++)
             {
                 string[] lineElements = lines[i].Split(";");
                 for (int j = 0; j < lineElements.Length; j++)
@@ -34,6 +33,13 @@ namespace Library.WorkWithSchemas
                             break;
                         case "dateTime":
                             if (!DateTime.TryParse(lineElement, out var date))
+                            {
+                                DisplayErrorMessage(i, j, lineElements);
+                                return false;
+                            }
+                            break;
+                        case "dictionary<uint, uint>":
+                            if (!(uint.TryParse(lineElements[j], out var uint1) && uint.TryParse(lineElements[j + 1], out var uint2)))
                             {
                                 DisplayErrorMessage(i, j, lineElements);
                                 return false;
