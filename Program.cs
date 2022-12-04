@@ -103,7 +103,16 @@ namespace Library
                 uint readerId = uint.Parse(recordsData[i][0]);
                 uint bookId = uint.Parse(recordsData[i][1]);
                 DateTime dateTaking = DateTime.Parse(recordsData[i][2]);
-                DateTime dateReturn = DateTime.Parse(recordsData[i][3]);
+                DateTime dateReturn;
+                if (recordsData[i].Length == 3)
+                {
+                    dateReturn = DateTime.MinValue;
+                }
+                else
+                {
+                    dateReturn = DateTime.Parse(recordsData[i][3]);
+                }
+
 
                 records.Add(new Record(readerId, bookId, dateTaking, dateReturn));
             }

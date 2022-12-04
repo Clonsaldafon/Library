@@ -42,45 +42,47 @@ namespace Library
             string dataInColumns = GetDataInColumns(authorsFullNames, booksTitles, readersFullNames, datesTaking, maxLengths);
 
             StringBuilder builder = new StringBuilder();
+
             builder.Append(columns);
             builder.Append(dataInColumns);
+
             return builder.ToString();
         }
 
         private string[] GetAuthorsFullNames()
         {
-            string[] strings = new string[Authors.Count];
+            string[] fullNames = new string[Authors.Count];
 
             for (int i = 0; i < Authors.Count; i++)
             {
-                strings[i] = Authors[i].FullName;
+                fullNames[i] = Authors[i].FullName;
             }
 
-            return strings;
+            return fullNames;
         }
 
         private string[] GetBooksTitles()
         {
-            string[] strings = new string[Books.Count];
+            string[] titles = new string[Books.Count];
 
             for (int i = 0; i < Books.Count; i++)
             {
-                strings[i] = Books[i].Title;
+                titles[i] = Books[i].Title;
             }
 
-            return strings;
+            return titles;
         }
 
         private string[] GetReadersFullNames()
         {
-            string[] strings = new string[Records.Count];
+            string[] fullNames = new string[Readers.Count];
 
-            for (int i = 0; i < Records.Count; i++)
+            for (int i = 0; i < Readers.Count; i++)
             {
-                strings[i] = Readers[(int)Records[i].ReaderId - 1].FullName;
+                fullNames[i] = Readers[i].FullName;
             }
 
-            return strings;
+            return fullNames;
         }
 
         private string[] GetDatesTaking()
@@ -149,15 +151,16 @@ namespace Library
             for (int i = 0; i < Books.Count; i++)
             {
                 uint authorId = GetAuthorIdByBookId(Books[i].AuthorId);
-                uint readerId = GetRecordReaderIdByBookId(Books[i].Id);
+                uint readerId = GetReaderIdByBookId(Books[i].Id);
+                int recordIndex = GetRecordIndexByBookId(Books[i].Id);
 
-                builder.Append($"| {authorsFullNames[authorId - 1]}{GetEmptyString(maxLengths[0], authorsFullNames, authorId)} ");
-                builder.Append($"| {booksTitles[i]}{GetEmptyString(maxLengths[1], booksTitles, Books[i].Id)} ");
+                builder.Append($"| {authorsFullNames[(int)authorId - 1]}{GetEmptyString(maxLengths[0], authorsFullNames, authorId)} ");
+                builder.Append($"| {booksTitles[(int)Books[i].Id - 1]}{GetEmptyString(maxLengths[1], booksTitles, Books[i].Id)} ");
 
-                if (readerId > 0 && readersFullNames.Contains(Readers[(int)readerId].FullName))
+                if (!Books[i].IsAvailable)
                 {
-                    builder.Append($"| {readersFullNames[readerId - 1]}{GetEmptyString(maxLengths[2], readersFullNames, readerId)} ");
-                    builder.Append($"| {datesTaking[readerId - 1]}{GetEmptyString(maxLengths[3], datesTaking, readerId)} |\n");
+                    builder.Append($"| {readersFullNames[(int)readerId - 1]}{GetEmptyString(maxLengths[2], readersFullNames, readerId)} ");
+                    builder.Append($"| {datesTaking[recordIndex]}{GetEmptyString(maxLengths[3], datesTaking, readerId)} |\n");
                 }
                 else
                 {
@@ -182,7 +185,7 @@ namespace Library
             return uint.MinValue;
         }
 
-        private uint GetRecordReaderIdByBookId(uint id)
+        private uint GetReaderIdByBookId(uint id)
         {
             foreach (Record record in Records)
             {
@@ -193,6 +196,19 @@ namespace Library
             }
 
             return uint.MinValue;
+        }
+
+        private int GetRecordIndexByBookId(uint id)
+        {
+            for (int i = 0; i < Records.Count; i++)
+            {
+                if (Records[i].BookId == id)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
         }
 
         private string GetEmptyString(int maxLength, string[] data, uint id)
@@ -209,9 +225,13 @@ namespace Library
         {
             foreach (Record record in Records)
             {
-                if (DateTime.Compare(record.DateReturn, DateTime.Now) < 0 || record.DateReturn != DateTime.MinValue)
+                if (record.DateReturn != DateTime.MinValue)
                 {
                     Books[(int)record.BookId - 1].SetAvailable(true);
+                }
+                else
+                {
+                    Books[(int)record.BookId - 1].SetAvailable(false);
                 }
             }
         }
