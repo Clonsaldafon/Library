@@ -144,7 +144,8 @@ namespace Library
             return builder.ToString();
         }
 
-        private string GetDataInColumns(string[] authorsFullNames, string[] booksTitles, string[] readersFullNames, string[] datesTaking, int[] maxLengths)
+        private string GetDataInColumns(string[] authorsFullNames, string[] booksTitles, string[] readersFullNames,
+                                        string[] datesTaking, int[] maxLengths)
         {
             StringBuilder builder = new StringBuilder();
 
