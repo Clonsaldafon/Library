@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using Library.WorkWithSchemas;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,35 +22,49 @@ namespace Library
 
             string[] fileNames = new string[] { "books", "authors", "readers", "records" };
 
-            string[] csvPaths = ReaderFromCSV.GetPaths(pathOfProject, fileNames);
-            /*string[] jsonPaths = GetPaths(pathOfProject, "Schemas", fileNames, "schema.json");*/
+            string[] csvPaths = ReaderFromFile.GetPaths(pathOfProject, fileNames, "Data", "data.csv");
+            string[] jsonPaths = ReaderFromFile.GetPaths(pathOfProject, fileNames, "Schemas", "schema.json");
 
-            List<string[]> booksData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Books]);
-            List<string[]> authorsData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Authors]);
-            List<string[]> readersData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Readers]);
-            List<string[]> recordsData = ReaderFromCSV.DataParser(csvPaths[(int)Table.Records]);
+            List<Schema> schemas = ReaderFromFile.GetSchemas(jsonPaths);
 
-            List<Author> authors = CreateAuthorsList(authorsData);
-            List<Book> books = CreateBooksList(booksData);
-            List<Reader> readers = CreateReadersList(readersData);
-            List<Record> records = CreateRecordsList(recordsData);
+            List<string[]> booksData = ReaderFromFile.DataParser(csvPaths[(int)Table.Books]);
+            List<string[]> authorsData = ReaderFromFile.DataParser(csvPaths[(int)Table.Authors]);
+            List<string[]> readersData = ReaderFromFile.DataParser(csvPaths[(int)Table.Readers]);
+            List<string[]> recordsData = ReaderFromFile.DataParser(csvPaths[(int)Table.Records]);
 
-            Database database = new Database(authors, books, readers, records);
+            try
+            {
+                JSONSchemaValidator.IsValidToSchema(booksData, schemas[0], $"{fileNames[0]}-schema.json");
+                JSONSchemaValidator.IsValidToSchema(authorsData, schemas[1], $"{fileNames[1]}-schema.json");
+                JSONSchemaValidator.IsValidToSchema(readersData, schemas[2], $"{fileNames[2]}-schema.json");
+                JSONSchemaValidator.IsValidToSchema(recordsData, schemas[3], $"{fileNames[3]}-schema.json");
 
-            database.UpdateBooksAvailabilityData();
+                List<Author> authors = CreateAuthorsList(authorsData);
+                List<Book> books = CreateBooksList(booksData);
+                List<Reader> readers = CreateReadersList(readersData);
+                List<Record> records = CreateRecordsList(recordsData);
 
-            string data = database.GetData();
-            Console.WriteLine(data);
+                Database database = new Database(authors, books, readers, records);
+
+                database.UpdateBooksAvailabilityData();
+
+                string data = database.GetData();
+                Console.WriteLine(data);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         static List<Author> CreateAuthorsList(List<string[]> authorsData)
         {
             List<Author> authors = new List<Author>();
 
-            foreach (string[] authorData in authorsData)
+            for(int i = 1; i < authorsData.Count; i++)
             {
-                uint id = uint.Parse(authorData[0]);
-                string fullName = authorData[1];
+                uint id = uint.Parse(authorsData[i][0]);
+                string fullName = authorsData[i][1];
 
                 authors.Add(new Author(id, fullName));
             }
@@ -60,16 +75,16 @@ namespace Library
         static List<Book> CreateBooksList(List<string[]> booksData)
         {
             List<Book> books = new List<Book>();
-
-            foreach (string[] bookData in booksData)
+            
+            for (int i = 1; i < booksData.Count; i++)
             {
-                uint id = uint.Parse(bookData[0]);
-                uint authorId = uint.Parse(bookData[1]);
-                string title = bookData[2];
-                int yearOfPublication = int.Parse(bookData[3]);
-                uint cabinetNumber = uint.Parse(bookData[4]);
-                uint shelfNumber = uint.Parse(bookData[5]);
-                bool isAvailable = bool.Parse(bookData[6]);
+                uint id = uint.Parse(booksData[i][0]);
+                uint authorId = uint.Parse(booksData[i][1]);
+                string title = booksData[i][2];
+                int yearOfPublication = int.Parse(booksData[i][3]);
+                uint cabinetNumber = uint.Parse(booksData[i][4]);
+                uint shelfNumber = uint.Parse(booksData[i][5]);
+                bool isAvailable = bool.Parse(booksData[i][6]);
 
                 books.Add(new Book(id, authorId, title, yearOfPublication, cabinetNumber, shelfNumber, isAvailable));
             }
@@ -81,10 +96,10 @@ namespace Library
         {
             List<Reader> readers = new List<Reader>();
 
-            foreach (string[] readerData in readersData)
+            for (int i = 1; i < readersData.Count; i++)
             {
-                uint id = uint.Parse(readerData[0]);
-                string fullName = readerData[1];
+                uint id = uint.Parse(readersData[i][0]);
+                string fullName = readersData[i][1];
 
                 readers.Add(new Reader(id, fullName));
             }
@@ -96,7 +111,7 @@ namespace Library
         {
             List<Record> records = new List<Record>();
 
-            for (int i = 0; i < recordsData.Count; i++)
+            for (int i = 1; i < recordsData.Count; i++)
             {
                 uint readerId = uint.Parse(recordsData[i][0]);
                 uint bookId = uint.Parse(recordsData[i][1]);

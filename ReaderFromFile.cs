@@ -1,12 +1,18 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using Library.WorkWithSchemas;
+using Microsoft.VisualBasic.FileIO;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Library
 {
-    internal class ReaderFromCSV
+    internal class ReaderFromFile
     {
-        public static string[] GetPaths(string pathOfProject, string[] fileNames, string folder = "Data", string type = "data.csv")
+        public static string[] GetPaths(string pathOfProject, string[] fileNames, string folder, string type)
         {
             string[] paths = new string[fileNames.Length];
 
@@ -16,6 +22,19 @@ namespace Library
             }
 
             return paths;
+        }
+
+        public static List<Schema> GetSchemas(string[] pathsToJSONFiles)
+        {
+            List<Schema> schemas = new List<Schema>();
+
+            for (int i = 0; i < pathsToJSONFiles.Length; i++)
+            {
+                Schema schema = JsonConvert.DeserializeObject<Schema>(File.ReadAllText(pathsToJSONFiles[i]));
+                schemas.Add(schema);
+            }
+
+            return schemas;
         }
 
         public static List<string[]> DataParser(string pathToCSVFile)

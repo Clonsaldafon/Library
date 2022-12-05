@@ -1,47 +1,49 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace Library.WorkWithSchemas
 {
     internal class JSONSchemaValidator
     {
-        public static bool IsValidToSchema(string[] lines, Schema schema)
+        public static bool IsValidToSchema(List<string[]> data, Schema schema, string fileName)
         {
-            for (int i = 0; i < lines.Length; i++)
+            for (int i = 1; i < data.Count; i++)
             {
-                string[] lineElements = lines[i].Split(";");
-                for (int j = 0; j < lineElements.Length; j++)
+                string[] dataElements = data[i];
+
+                for (int j = 0; j < dataElements.Length; j++)
                 {
-                    string lineElement = lineElements[j];
+                    string dataElement = dataElements[j];
 
                     switch (schema.Elements[j].Type)
                     {
                         case "int":
-                            if (!int.TryParse(lineElement, out var integer))
+                            if (!int.TryParse(dataElement, out var integer))
                             {
-                                DisplayErrorMessage(i, j, lineElements);
+                                DisplayErrorMessage(i, j, dataElements, fileName);
 
                                 return false;
                             }
                             break;
                         case "bool":
-                            if (!bool.TryParse(lineElement, out var boolean))
+                            if (!bool.TryParse(dataElement, out var boolean))
                             {
-                                DisplayErrorMessage(i, j, lineElements);
+                                DisplayErrorMessage(i, j, dataElements, fileName);
                                 return false;
                             }
                             break;
                         case "dateTime":
-                            if (!DateTime.TryParse(lineElement, out var date))
+                            if (!DateTime.TryParse(dataElement, out var date))
                             {
-                                DisplayErrorMessage(i, j, lineElements);
+                                DisplayErrorMessage(i, j, dataElements, fileName);
                                 return false;
                             }
                             break;
-                        case "dictionary<uint, uint>":
-                            if (!(uint.TryParse(lineElements[j], out var uint1) && uint.TryParse(lineElements[j + 1], out var uint2)))
+                        case "uint":
+                            if (!uint.TryParse(dataElements[j], out var uinteger))
                             {
-                                DisplayErrorMessage(i, j, lineElements);
+                                DisplayErrorMessage(i, j, dataElements, fileName);
                                 return false;
                             }
                             break;
@@ -50,34 +52,28 @@ namespace Library.WorkWithSchemas
                     }
                 }
             }
-            return true && IsColumnsValid(lines[0], schema);
+            return true && IsColumnsValid(data[0], schema, fileName);
         }
 
-        /*public static Schema GetSchema(string path)
-        {
-            return JsonConvert.DeserializeObject<Schema>(File.ReadAllText(path));
-        }*/
-
-        private static bool IsColumnsValid(string columns, Schema schema)
-        {
-            string[] columnsElements = columns.Split(";");
-            for (int i = 0; i < columnsElements.Length; i++)
+        private static bool IsColumnsValid(string[] columns, Schema schema, string fileName)
+        {;
+            for (int i = 0; i < columns.Length; i++)
             {
-                if (!(columnsElements[i] == schema.Elements[i].Name))
+                if (columns[i] != schema.Elements[i].Name)
                 {
-                    DisplayErrorMessage(0, 0, columnsElements);
+                    DisplayErrorMessage(1, i, columns, fileName);
                     return false;
                 }
             }
             return true;
         }
 
-        private static void DisplayErrorMessage(int raw, int column, string[] line)
+        private static void DisplayErrorMessage(int raw, int column, string[] line, string fileName)
         {
-            string errorAccured = $"Error accured! In raw {raw} and column {column} wrong Type!\n";
-            string correctionInfo = $"In line: {raw} element: {line[column]}";
+            string errorAccured = $"ERROR: [{fileName}] In raw:{raw}, column:{column + 1} - wrong type!\n";
+            string correctionInfo = $"Line: {raw}. Element: {line[column]}";
 
-            throw new FormatException(String.Concat(errorAccured, correctionInfo));
+            throw new FormatException(string.Concat(errorAccured, correctionInfo));
         }
     }
 }
