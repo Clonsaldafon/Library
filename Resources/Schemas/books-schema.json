@@ -23,8 +23,14 @@
       "isPrimary": false
     },
     {
-      "name": "cabinetAndShelfNumber",
-      "type": "dictionary<uint, uint>"
+      "name": "cabinetNumber",
+      "type": "uint",
+      "isPrimary": false
+    },
+    {
+      "name": "shelfNumber",
+      "type": "uint",
+      "isPrimary": false
     },
     {
       "name": "isAvailable",
