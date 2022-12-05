@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Library.WorkWithSchemas
@@ -68,12 +67,12 @@ namespace Library.WorkWithSchemas
             return true;
         }
 
-        private static void DisplayErrorMessage(int raw, int column, string[] line, string fileName)
+        private static void DisplayErrorMessage(int raw, int column, string[] dataElements, string fileName)
         {
-            string errorAccured = $"ERROR: [{fileName}] In raw:{raw}, column:{column + 1} - wrong type!\n";
-            string correctionInfo = $"Line: {raw}. Element: {line[column]}";
+            string error = $"ERROR: [{fileName}] In raw:{raw}, column:{column + 1} - wrong type!\n";
+            string errorInfo = $"Line: {raw}. Element: {dataElements[column]}";
 
-            throw new FormatException(string.Concat(errorAccured, correctionInfo));
+            throw new FormatException(string.Concat(error, errorInfo));
         }
     }
 }

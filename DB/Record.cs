@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Library
+namespace Library.DB
 {
     internal class Record
     {

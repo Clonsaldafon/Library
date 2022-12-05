@@ -1,5 +1,5 @@
-﻿using Library.WorkWithSchemas;
-using Microsoft.VisualBasic.FileIO;
+﻿using Library.DB;
+using Library.WorkWithSchemas;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,10 +34,15 @@ namespace Library
 
             try
             {
-                JSONSchemaValidator.IsValidToSchema(booksData, schemas[0], $"{fileNames[0]}-schema.json");
-                JSONSchemaValidator.IsValidToSchema(authorsData, schemas[1], $"{fileNames[1]}-schema.json");
-                JSONSchemaValidator.IsValidToSchema(readersData, schemas[2], $"{fileNames[2]}-schema.json");
-                JSONSchemaValidator.IsValidToSchema(recordsData, schemas[3], $"{fileNames[3]}-schema.json");
+                bool booksAreValid = JSONSchemaValidator.IsValidToSchema(booksData, schemas[0], $"{fileNames[0]}-schema.json");
+                bool authorsAreValid = JSONSchemaValidator.IsValidToSchema(authorsData, schemas[1], $"{fileNames[1]}-schema.json");
+                bool readersAreValid = JSONSchemaValidator.IsValidToSchema(readersData, schemas[2], $"{fileNames[2]}-schema.json");
+                bool recordsAreValid = JSONSchemaValidator.IsValidToSchema(recordsData, schemas[3], $"{fileNames[3]}-schema.json");
+
+                if (!(booksAreValid && authorsAreValid && readersAreValid && recordsAreValid))
+                {
+                    throw new FormatException("Format error!");
+                }
 
                 List<Author> authors = CreateAuthorsList(authorsData);
                 List<Book> books = CreateBooksList(booksData);
