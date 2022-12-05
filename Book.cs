@@ -9,16 +9,19 @@ namespace Library
         public uint AuthorId { get; private set; }
         public string Title { get; private set; }
         public int YearOfPublication { get; private set; }
-        public Dictionary<uint, uint> CabinetAndShelfNumbers { get; private set; }
+        public uint CabinetNumber { get; private set; }
+        public uint ShelfNumber { get; private set; }
         public bool IsAvailable { get; private set; }
 
-        public Book(uint id, uint authorId, string title, int yearOfPublication, Dictionary<uint, uint> cabinetAndShelfNumbers, bool isAvailable)
+        public Book(uint id, uint authorId, string title, int yearOfPublication,
+                    uint cabinetNumber, uint shelfNumber, bool isAvailable)
         {
             Id = id;
             AuthorId = authorId;
             Title = title;
             YearOfPublication = yearOfPublication;
-            CabinetAndShelfNumbers = cabinetAndShelfNumbers;
+            CabinetNumber = cabinetNumber;
+            ShelfNumber = shelfNumber;
             IsAvailable = isAvailable;
         }
 

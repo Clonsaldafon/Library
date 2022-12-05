@@ -67,13 +67,11 @@ namespace Library
                 uint authorId = uint.Parse(bookData[1]);
                 string title = bookData[2];
                 int yearOfPublication = int.Parse(bookData[3]);
-                Dictionary<uint, uint> cabinetAndShelfNumbers = new Dictionary<uint, uint>()
-                {
-                    { uint.Parse(bookData[4]), uint.Parse(bookData[5]) }
-                };
+                uint cabinetNumber = uint.Parse(bookData[4]);
+                uint shelfNumber = uint.Parse(bookData[5]);
                 bool isAvailable = bool.Parse(bookData[6]);
 
-                books.Add(new Book(id, authorId, title, yearOfPublication, cabinetAndShelfNumbers, isAvailable));
+                books.Add(new Book(id, authorId, title, yearOfPublication, cabinetNumber, shelfNumber, isAvailable));
             }
 
             return books;
